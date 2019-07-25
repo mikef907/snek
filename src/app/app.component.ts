@@ -1,5 +1,7 @@
-import { Component, OnInit, ViewChild, ElementRef, HostListener } from '@angular/core';
-import { interval, Subscription } from 'rxjs';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { interval, Subscription, fromEvent, merge, Observable } from 'rxjs';
+import { throttle } from 'rxjs/operators';
+
 
 @Component({
   selector: 'my-app',
@@ -21,14 +23,11 @@ export class AppComponent  {
   private state = { snakeLength: this.initSnakeLength, gameSpeed: this.initGameSpd };
 
   $game: Subscription;
+  $move: Observable<Event>;
   message: string;
 
-  @HostListener('document:keydown', ['$event'])
-  keydown(event: KeyboardEvent) {
-    this.snake.move(event);
-  }
-
   ngOnInit() {
+    this.$move = fromEvent(document, 'keydown').pipe(throttle(ev => interval(this.state.gameSpeed)));
     this.ctx = this.canvas.nativeElement.getContext('2d');
     this.ctx.canvas.width = this.canvasWidth;
     this.ctx.canvas.height = this.canvasHeight;
@@ -51,8 +50,10 @@ export class AppComponent  {
       this.$game.unsubscribe();
     }
 
-    this.$game = interval(spd).subscribe(() => {
-      if (!this.snake.animate()) {
+    this.$game = merge(this.$move, interval(spd)).subscribe(res => {
+      if (res instanceof Event) {
+        this.snake.move(res as KeyboardEvent);
+      } else if (!this.snake.animate()) {
         this.message = `Your snek ded, length ${this.snake.Length}`;
         this.$game.unsubscribe();
       } else if (this.state.snakeLength !== this.snake.Length) {

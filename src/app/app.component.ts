@@ -155,7 +155,8 @@ export class Snake {
       this.ctx.clearRect(prev.x, prev.y, this.size, this.size);
 
       // Random chance to respawn food cause why not
-      if (this.food.lifespan-- < 50 && this.food.lifespan % Math.ceil(Math.random() * 250) === 0) {
+      // Is this 10% change after 50 ticks?  Doesn't feel like it...
+      if (this.food.lifespan-- < 50 && Math.random() < 0.1 || this.food.lifespan === 0) {
         this.food.clear();
         this.food.spawn(this.body);
       }

@@ -1,0 +1,26 @@
+<h2 class="text-center">Ssssssnek</h2>
+<div class="d-flex justify-content-center">
+  <div class="d-flex flex-column">
+    <div class="d-flex align-items-center">
+      <canvas #canvas class="mr-2" style="background:black;"></canvas>
+      <div style="min-width: 20rem;">
+        <p class="mb-0">
+          Game Speed: <span class="badge badge-pill badge-info">{{ state.gameSpeed }}</span>
+        </p>
+        <small class="text-muted">The game speeds up as you progress (lower is faster)</small>
+        <p class="mb-0">
+          Food Halflife: <span class="badge badge-pill badge-info">{{ food.lifespan }}%</span>
+        </p>
+        <small class="text-muted">Food has a chance of disappearing below 50%</small>
+        <p class="mb-0">
+          Snake Length: <span class="badge badge-pill badge-info">{{ snake.Length }}</span>
+        </p>
+        <small class="text-muted">Use W, A, S, D to move around</small>
+      </div>
+    </div>
+    <div *ngIf="message" class="alert alert-info">
+      {{ message }}
+      <button class="btn btn-primary" (click)="startGame()">Whatever, reset</button>
+    </div>
+  </div>
+</div>
